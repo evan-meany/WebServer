@@ -3,9 +3,39 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BLACKJACK</title>
+    <title>Playing Cards</title>
+    <style>
+        /* Style for the card container */
+        .card-container {
+            display: flex; /* Display cards side by side */
+        }
+
+        /* Style for individual cards */
+        .card {
+            width: 150px;
+            height: 200px;
+            margin-right: 10px; /* Add some spacing between cards */
+            border: 1px solid #000;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+    </style>
 </head>
 <body>
-    <h1>BLACKJACK</h1>
+    <div class="card-container">
+        <div class="card">
+            <!-- Content for the first card -->
+            <h2>Card 1</h2>
+            <p>Suit: Hearts</p>
+            <p>Value: Ace</p>
+        </div>
+        <div class="card">
+            <!-- Content for the second card -->
+            <h2>Card 2</h2>
+            <p>Suit: Diamonds</p>
+            <p>Value: King</p>
+        </div>
+    </div>
 </body>
 </html>
