@@ -20,9 +20,9 @@ impl Worker {
             .unwrap();
          match message {
             Message::NewJob(job) => {
-               println!("Worker {id} got a job and is executing");
+               // println!("Worker {id} got a job and is executing");
                job();
-               println!("Worker {id} finished job execution");
+               // println!("Worker {id} finished job execution");
             }
             Message::Terminate => { break; }
          }
@@ -75,7 +75,7 @@ impl Drop for ThreadPool {
       }
 
       for worker in &mut self.workers {
-         println!("Shutting down worker {}", worker.id);
+         // println!("Shutting down worker {}", worker.id);
          if let Some(thread) = worker.thread.take() {
             thread.join().unwrap();
          }

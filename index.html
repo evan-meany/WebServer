@@ -20,22 +20,153 @@
             border-radius: 8px;
             box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
         }
+
+        /* Style for buttons */
+        .button-container {
+            margin-top: 20px;
+        }
+
+        .button {
+            padding: 10px 20px;
+            margin-right: 10px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .button:hover {
+            background-color: #0056b3;
+        }
     </style>
 </head>
 <body>
-    <div class="card-container">
-        <div class="card">
-            <!-- Content for the first card -->
-            <h2>Card 1</h2>
-            <p>Suit: Hearts</p>
-            <p>Value: Ace</p>
-        </div>
-        <div class="card">
-            <!-- Content for the second card -->
-            <h2>Card 2</h2>
-            <p>Suit: Diamonds</p>
-            <p>Value: King</p>
-        </div>
+    <div class="card-container" id="house">
     </div>
+
+    <!-- Form container for Hit and Stay buttons -->
+    <div class="button-container">
+        <form method="POST" action="/hit-stay">
+            <button class="button" id="hit-button" type="submit">Hit</button>
+            <button class="button" id="stay-button" type="submit">Stay</button>
+        </form>
+    </div>
+
+    <button id="fetchButton">Fetch Data from Server</button>
+
+    <button id="startButton">Start Game</button>
+
+    <script>
+        function addCardToContainer(cardContainer, suit, value) {
+            // Create a new card element
+            const newCard = document.createElement("div");
+            newCard.className = "card";
+    
+            // Content for the new card (you can customize this)
+            newCard.innerHTML = `
+                <p>Value: ${value}</p>
+                <p>Suit: ${suit}</p>
+            `;
+    
+            // Append the new card to the card container
+            cardContainer.appendChild(newCard);
+        }
+
+        function addCardToPlayer(id, suit, value) {
+            const playerId = `player-container-${id}`;
+            const playerContainer = document.getElementById(playerId);
+
+            if (playerContainer) {
+                // Get the card container for the player
+                const cardContainer = playerContainer.querySelector(".card-container");
+
+                if (cardContainer) {
+                    // Use the addCardToContainer function to add the card
+                    addCardToContainer(cardContainer, suit, value);
+                } else {
+                    console.error("Card container not found for player: " + playerId);
+                }
+            } else {
+                console.error("Player container not found: " + playerId);
+            }
+        }
+
+
+        function addPlayer(id, money) {
+            // Create a unique ID for the player's containers
+            const playerId = `player-container-${id}`;
+            
+            // Create a new player container
+            const playerContainer = document.createElement("div");
+            playerContainer.className = "player-container";
+            playerContainer.id = playerId;
+
+            // Create a money element
+            const moneyElement = document.createElement("p");
+            moneyElement.className = "money";
+            moneyElement.textContent = `Money: ${money}`; // Set the initial money value
+
+            // Append the money element to the player container
+            playerContainer.appendChild(moneyElement);
+
+            // Create a card container for the player
+            const cardContainer = document.createElement("div");
+            cardContainer.className = "card-container";
+
+            // Append the card container to the player container
+            playerContainer.appendChild(cardContainer);
+
+            // Append the player's container to the body
+            document.body.appendChild(playerContainer);
+        }
+
+        function fetchServerData() {
+            // Make a GET request to the server endpoint
+            fetch("/server-endpoint")
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error("Network response was not ok");
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    // Handle the response data here
+                    console.log("Server Data:", data);
+                })
+                .catch(error => {
+                    console.error("Fetch error:", error);
+                });
+        }
+
+        function startBlackjackGame() {
+            fetch("/start-game")
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error("Network response was not ok");
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    for (const player of data.players) {
+                        addPlayer(player.id, player.money);
+                        for (const card of player.cards) {
+                            addCardToPlayer(player.id, card.suit, card.value)
+                        }
+                    }
+                    console.log("Players:", data.players);
+                    console.log("House:", data.house);
+                })
+                .catch(error => {
+                    console.error("Fetch error:", error);
+                });
+        }
+
+        // Add a click event listener to the button
+        const fetchButton = document.getElementById("fetchButton");
+        fetchButton.addEventListener("click", fetchServerData);
+        const startButton = document.getElementById("startButton");
+        startButton.addEventListener("click", startBlackjackGame);
+    </script>
 </body>
 </html>
